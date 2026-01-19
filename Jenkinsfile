@@ -19,62 +19,59 @@ pipeline {
             }
         }
 
-        stage('Build Services') {
-            parallel {
-                stage('Anggota Service') {
-                    steps {
-                        dir('anggota') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        // Build services SEQUENTIAL (one by one) to save RAM
+        stage('Build Eureka Server') {
+            steps {
+                dir('eureka_server') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('Buku Service') {
-                    steps {
-                        dir('buku') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build API Gateway') {
+            steps {
+                dir('api_gateway') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('Peminjaman Service') {
-                    steps {
-                        dir('peminjaman') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build Anggota Service') {
+            steps {
+                dir('anggota') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('Pengembalian Service') {
-                    steps {
-                        dir('pengembalian') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build Buku Service') {
+            steps {
+                dir('buku') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('Email Service') {
-                    steps {
-                        dir('email') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build Peminjaman Service') {
+            steps {
+                dir('peminjaman') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('Eureka Server') {
-                    steps {
-                        dir('eureka_server') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build Pengembalian Service') {
+            steps {
+                dir('pengembalian') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
+            }
+        }
 
-                stage('API Gateway') {
-                    steps {
-                        dir('api_gateway') {
-                            sh 'mvn clean package -DskipTests -B'
-                        }
-                    }
+        stage('Build Email Service') {
+            steps {
+                dir('email') {
+                    sh 'mvn clean package -DskipTests -B -q'
                 }
             }
         }
