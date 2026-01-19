@@ -6,6 +6,11 @@ pipeline {
         disableConcurrentBuilds()
     }
 
+    tools {
+        maven 'Maven 3.9'
+        jdk 'JDK 21'
+    }
+
     stages {
 
         stage('Checkout') {
@@ -14,118 +19,82 @@ pipeline {
             }
         }
 
-        stage('Build Services (Maven)') {
+        stage('Build Services') {
             parallel {
                 stage('Anggota Service') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('anggota') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('Buku Service') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('buku') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('Peminjaman Service') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('peminjaman') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('Pengembalian Service') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('pengembalian') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('Email Service') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('email') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('Eureka Server') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('eureka_server') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
 
                 stage('API Gateway') {
-                    agent {
-                        docker {
-                            image 'maven:3.9.6-eclipse-temurin-17'
-                            args '--memory=1g --memory-swap=1g'
-                        }
-                    }
                     steps {
                         dir('api_gateway') {
-                            sh 'mvn clean package -DskipTests'
+                            sh 'mvn clean package -DskipTests -B'
                         }
                     }
                 }
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker Images') {
             steps {
-                sh 'docker compose -f docker-compose-app.yml build'
+                sh 'docker build -t eureka-server:latest ./eureka_server'
+                sh 'docker build -t api-gateway:latest ./api_gateway'
+                sh 'docker build -t anggota-service:latest ./anggota'
+                sh 'docker build -t buku-service:latest ./buku'
+                sh 'docker build -t peminjaman-service:latest ./peminjaman'
+                sh 'docker build -t pengembalian-service:latest ./pengembalian'
+                sh 'docker build -t email-service:latest ./email'
             }
         }
 
         stage('Deploy') {
             steps {
                 sh 'docker network create latihan_perpustakaan_elk || true'
-                sh 'docker compose -f docker-compose-app.yml up -d'
+                sh 'docker compose -f docker-compose-app.yml up -d --force-recreate'
             }
         }
     }
