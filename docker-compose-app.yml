@@ -5,6 +5,8 @@ services:
   rabbitmq:
     image: rabbitmq:3-management-alpine
     container_name: rabbitmq
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "5672:5672"
       - "15672:15672"
@@ -25,6 +27,8 @@ services:
       context: ./eureka_server
       dockerfile: Dockerfile
     container_name: eureka-server
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8761:8761"
     networks:
@@ -42,6 +46,8 @@ services:
       context: ./api_gateway
       dockerfile: Dockerfile
     container_name: api-gateway
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "9000:9000"
     environment:
@@ -60,6 +66,8 @@ services:
       context: ./anggota
       dockerfile: Dockerfile
     container_name: anggota-service
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8081:8081"
     environment:
@@ -78,6 +86,8 @@ services:
       context: ./buku
       dockerfile: Dockerfile
     container_name: buku-service
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8082:8082"
     environment:
@@ -96,6 +106,8 @@ services:
       context: ./peminjaman
       dockerfile: Dockerfile
     container_name: peminjaman-service
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8083:8083"
     environment:
@@ -117,6 +129,8 @@ services:
       context: ./pengembalian
       dockerfile: Dockerfile
     container_name: pengembalian-service
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8084:8084"
     environment:
@@ -138,6 +152,8 @@ services:
       context: ./email
       dockerfile: Dockerfile
     container_name: email-service
+    mem_limit: 384m
+    cpus: 0.5
     ports:
       - "8085:8085"
     environment:

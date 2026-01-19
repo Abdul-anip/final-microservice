@@ -4,6 +4,9 @@ services:
   prometheus:
     build: ./prometheus
     container_name: prometheus
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: 0.5
     volumes:
       - prometheus_data:/prometheus
     command:
@@ -21,6 +24,9 @@ services:
   grafana:
     build: ./grafana
     container_name: grafana
+    mem_limit: 256m
+    mem_reservation: 128m
+    cpus: 0.5
     volumes:
       - grafana_data:/var/lib/grafana
     environment:
