@@ -1,4 +1,5 @@
 pipeline {
+    agent any
 
     options {
         timestamps()
@@ -8,89 +9,107 @@ pipeline {
     stages {
 
         stage('Checkout') {
-            agent any
             steps {
                 checkout scm
             }
         }
 
         stage('Build Services (Maven)') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    args '--memory=1g --memory-swap=1g'
-                }
-            }
-            parallel failFast true, {
-
+            parallel {
                 stage('Anggota Service') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('anggota-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('anggota') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
                 stage('Buku Service') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('buku-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('buku') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
-                stage('Peminjaman Command') {
-                    steps {
-                        dir('peminjaman-command-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                stage('Peminjaman Service') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
                         }
                     }
-                }
-
-                stage('Peminjaman Query') {
                     steps {
-                        dir('peminjaman-query-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('peminjaman') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
                 stage('Pengembalian Service') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('pengembalian-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('pengembalian') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
-                stage('RabbitMQ Peminjaman') {
+                stage('Email Service') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('rabbitmq-peminjaman-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('email') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
-                stage('RabbitMQ Pengembalian') {
+                stage('Eureka Server') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('rabbitmq-pengembalian-service') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('eureka_server') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
 
                 stage('API Gateway') {
+                    agent {
+                        docker {
+                            image 'maven:3.9.6-eclipse-temurin-17'
+                            args '--memory=1g --memory-swap=1g'
+                        }
+                    }
                     steps {
-                        dir('api-gateway-pustaka') {
-                            sh 'chmod +x mvnw'
-                            sh './mvnw clean package -DskipTests'
+                        dir('api_gateway') {
+                            sh 'mvn clean package -DskipTests'
                         }
                     }
                 }
@@ -98,21 +117,26 @@ pipeline {
         }
 
         stage('Docker Build') {
-            agent any
             steps {
-                sh 'docker compose build'
+                sh 'docker compose -f docker-compose-app.yml build'
             }
         }
 
         stage('Deploy') {
-            agent any
             steps {
-                sh 'docker compose up -d'
+                sh 'docker network create latihan_perpustakaan_elk || true'
+                sh 'docker compose -f docker-compose-app.yml up -d'
             }
         }
     }
 
     post {
+        success {
+            echo '✅ Pipeline completed successfully!'
+        }
+        failure {
+            echo '❌ Pipeline failed!'
+        }
         always {
             cleanWs()
         }
