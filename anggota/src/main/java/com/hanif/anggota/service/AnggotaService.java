@@ -27,7 +27,7 @@ public class AnggotaService {
 
     public Anggota createAnggota(Anggota anggota) {
         Anggota savedAnggota = anggotaRepository.save(anggota);
-        logger.info("Anggota berhasil dubuat OKEEE: {}", savedAnggota);
+        logger.info("Anggota berhasil dubuat INI DIDEIT: {}", savedAnggota);
         return savedAnggota;
     }
 
