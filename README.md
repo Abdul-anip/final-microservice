@@ -106,7 +106,7 @@ docker-compose -f docker-compose-monitoring.yml up -d
 
 ## 🛠️ Microservices
 
-Daftar layanan yang tersedia dalam repositori ini:
+Daftar siapa layanan yang tersedia dalam repositori ini:
 - **Eureka Server**: Service Discovery (Port 8761)
 - **API Gateway**: Gerbang utama akses API (Port 9000)
 - **Anggota Service**: Manajemen data anggota (Port 8081)
