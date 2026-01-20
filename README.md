@@ -10,7 +10,7 @@ Proyek ini menggunakan Docker Compose untuk menjalankan infrastruktur pendukung.
 Untuk menjalankan semua microservices beserta database dan RabbitMQ:
 
 ```bash
-docker-compose -f docker-compose-app.yml up -d --build
+docker-compose -f docker-compose-app.yml up -d
 ```
 *Gunakan flag `--build` untuk memastikan image dibangun dari source code terbaru.*
 
