@@ -94,7 +94,7 @@ pipeline {
 
         stage('Deploy') {
             steps {
-                sh 'docker network create latihan_perpustakaan_elk || true'
+                sh 'docker network create latihan_perpustakaan_elk_hanif || true'
                 sh 'docker compose -f docker-compose-app.yml up -d --force-recreate'
             }
         }
