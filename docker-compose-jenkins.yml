@@ -54,7 +54,7 @@ networks:
     driver: bridge
   elk:
     external: true
-    name: latihan_perpustakaan_elk
+    name: latihan_perpustakaan_elk_hanif
 
 volumes:
   jenkins_home:
